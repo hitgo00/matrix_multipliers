@@ -25,7 +25,7 @@ void fill_matrix(int **matrix, int Rows){
     int i,j;
     for(i = 0; i<Rows; ++i){
         for(j = 0; j<Rows ;++j){
-            matrix[i][j] = rand()%500;
+            matrix[i][j] = rand()%50;
         }
     }
 }
@@ -59,11 +59,23 @@ int **subtract(int **A, int **B, int N){
      }
      return ret;
 }
+int **trivial(int **A, int **B, int N){
+    int **ret = allocate_matrix(N,N);
+    int i,j,k;
+    for(i = 0; i < N; ++i){
+        for(j = 0; j < N; ++j){
+            for(k = 0; k < N; ++k){
+                ret[i][j]+=A[i][k]*B[k][j];
+            }
+        }
+    }
+    return ret;
+}
 int **strassen(int **A, int **B, int N){
     //Base case
-    if(N==1){
-        int **ret = allocate_matrix(1,1);
-        ret[0][0] = A[0][0]*B[0][0];
+    if(N<=100){
+        int **ret = allocate_matrix(N,N);
+        ret = trivial(A,B,N);
         return ret;
     }
 
@@ -158,18 +170,7 @@ int **strassen(int **A, int **B, int N){
 
     return ret;
 }
-int **trivial(int **A, int **B, int N){
-    int **ret = allocate_matrix(N,N);
-    int i,j,k;
-    for(i = 0; i < N; ++i){
-        for(j = 0; j < N; ++j){
-            for(k = 0; k < N; ++k){
-                ret[i][j]+=A[i][k]*B[k][j];
-            }
-        }
-    }
-    return ret;
-}
+
 int main(void){
     int N;
     for(N = 1; N <= 2048; N*=2){
